@@ -6,6 +6,8 @@ import seaborn as sns
 from pathlib import Path
 from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
 
 
 # 1. NECESSITIES
@@ -65,7 +67,7 @@ df = data_clean(df, file_name)
 descriptive_dir = "Descriptive"
 os.makedirs(descriptive_dir, exist_ok=True)
 
-df_descriptive = df.describe()
+df_descriptive = df.describe() # create but not save as file
 print(f"Descriptive of {file_name}\n", df_descriptive,'\n')
 save_df(df_descriptive, f"{descriptive_dir}/Descriptive_{file_name}", "csv")
 
@@ -73,8 +75,8 @@ save_df(df_descriptive, f"{descriptive_dir}/Descriptive_{file_name}", "csv")
 def histogram(df, file_name):
     hists = {}
     for column in df:
-        fig = plt.figure(figsize=(10,6))
-        sns.histplot(df[column], kde=True)
+        fig = plt.figure(figsize=(10,6)) #create frame of chart
+        sns.histplot(df[column], kde=True) # insert data in frame
         plt.title(f"Distribution of {column} in {file_name}")
         plt.xlabel(column)
         plt.ylabel("Frequency")
@@ -105,7 +107,9 @@ for column, fig in boxplots.items():
 # 3.4. Save preprocessed file
 save_df(df, f"Preprocessed_{file_name}", "csv")
 
-# 3.5. Identify features and target variables
+
+# 4. TRAINING MULTIPLE LINEAR REGRESSION MODEL
+# 4.1. Identify features and target variables
 target_var = 'Performance Index'
 features = [x for x in list(df.columns) if x != target_var]
 df_y = df[target_var]
@@ -114,10 +118,57 @@ df_x = df[features]
 print(f"\n{file_name}'s feature columns:\n", list(df_x.columns), '\n')
 print(f"\n{file_name}'s target variable:\n", [target_var], '\n')
 
+# 4.2. Split train and test dataframe
+df_x_train, df_x_test, df_y_train, df_y_test = train_test_split(df_x, df_y, test_size=0.2, random_state=42)
+os.makedirs("Splitted training file", exist_ok=True)
+save_df(df_x_train, f"Splitted training file/Splitted_features_of_{file_name}_for_training", "csv")
+save_df(df_x_test, f"Splitted training file/Splitted_features_of_{file_name}_for_testing","csv")
+save_df(df_y_train, f"Splitted training file/Splitted_target_of_{file_name}_for_training","csv")
+save_df(df_y_test, f"Splitted training file/Splitted_target_of_{file_name}_for_testing", "csv")
 
-# 4. TRAINING MULTIPLE LINEAR REGRESSION MODEL
-lr_model = LinearRegression().fit(df_x, df_y)
+# 4.3. Create model with splitted dataframes for training
+lr_model = LinearRegression().fit(df_x_train, df_y_train)
 print("Model created and trained!")
+
+# 4.4. Make prediction on splitted test dataframe
+df_y_predicted = lr_model.predict(df_x_test)
+
+# 4.4. Evaluate model
+evaluation_dir = "Model evaluation"
+os.makedirs(evaluation_dir, exist_ok=True)
+def evaluate_lr_model(lr_model, evaluation_dir):
+    evaluation = {
+        "RMSE" : np.sqrt(metrics.mean_squared_error(df_y_test, df_y_predicted)),
+        "R2" :  round(lr_model.score(df_x_test, df_y_test))
+    }
+    df_evaluation = pd.DataFrame(evaluation).transpose()
+    save_df(df_evaluation, f"{evaluation_dir}/model_evaluation", "csv")
+    return df_evaluation
+
+df_evaluation = evaluate_lr_model(lr_model, "Model evaluation")
+print("Model evaluation:",df_evaluation)
+
+# 4.5. Draw scatterplot
+def scatter(x_test, y_test, y_prediction):
+    scatters = {}
+    target = str(y_test.columns)
+    for column in x_test:
+        fig = plt.figure(figsize=(10,6))
+        plt.scatter(x_test, y_test, color="blue", label=column)
+        plt.plot(x_test, y_prediction, color="red", label=target)
+        plt.title(f"Collaration between {column} and {target}")
+        plt.xlabel(column)
+        plt.ylabel(target)
+        plt.legend()
+        scatters[column] = fig
+
+    return scatters
+
+os.makedirs(f"{evaluation_dir}/Scatter", exist_ok=True)
+scatters = scatter(df_x_test, df_y_test, df_y_predicted)
+for column, fig in scatters:
+    fig.savefig(f"{evaluation_dir}/Scatter/{fig.get_title()}.png")
+
 
 # 5. MAKING PREDICTION WITH INPUT CSV FILES
 print("MAKE PREDICTION WITH INPUT CSV FILES")
