@@ -31,6 +31,7 @@ def read_csv_file(file_name):
         return pd.read_csv(file_name +'.csv')
     except Exception as e:
         print(f"An error occurred while reading the file: {e}")
+        return None
 # 1.3. Set display precision for dataframe
 pd.options.display.float_format = '{:.2f}'.format
 
@@ -136,26 +137,26 @@ df_y_predicted = lr_model.predict(df_x_test)
 # 4.4. Evaluate model
 evaluation_dir = "Model evaluation"
 os.makedirs(evaluation_dir, exist_ok=True)
-def evaluate_lr_model(lr_model, evaluation_dir):
+def evaluate_lr_model(lr_model, evaluation_dir, x_test, y_test, y_pred):
     evaluation = {
-        "RMSE" : np.sqrt(metrics.mean_squared_error(df_y_test, df_y_predicted)),
-        "R2" :  round(lr_model.score(df_x_test, df_y_test))
+        "RMSE" : np.round(np.sqrt(metrics.mean_squared_error(y_test, y_pred)), 4),
+        "R2" :  np.round(lr_model.score(x_test, y_test), 4)
     }
-    df_evaluation = pd.DataFrame(evaluation).transpose()
+    df_evaluation = pd.DataFrame(evaluation.items()).transpose()
     save_df(df_evaluation, f"{evaluation_dir}/model_evaluation", "csv")
     return df_evaluation
 
-df_evaluation = evaluate_lr_model(lr_model, "Model evaluation")
-print("Model evaluation:",df_evaluation)
+df_evaluation = evaluate_lr_model(lr_model, "Model evaluation", df_x_test, df_y_test, df_y_predicted)
+print("Model evaluation:\n",df_evaluation)
 
 # 4.5. Draw scatterplot
 def scatter(x_test, y_test, y_prediction):
     scatters = {}
-    target = str(y_test.columns)
+    target = y_test.name
     for column in x_test:
         fig = plt.figure(figsize=(10,6))
-        plt.scatter(x_test, y_test, color="blue", label=column)
-        plt.plot(x_test, y_prediction, color="red", label=target)
+        plt.scatter(x_test[column], y_test, color="blue", label=column)
+        #plt.plot(x_test[column], y_prediction, color="red", label=target)
         plt.title(f"Collaration between {column} and {target}")
         plt.xlabel(column)
         plt.ylabel(target)
@@ -166,19 +167,19 @@ def scatter(x_test, y_test, y_prediction):
 
 os.makedirs(f"{evaluation_dir}/Scatter", exist_ok=True)
 scatters = scatter(df_x_test, df_y_test, df_y_predicted)
-for column, fig in scatters:
-    fig.savefig(f"{evaluation_dir}/Scatter/{fig.get_title()}.png")
+for column, fig in scatters.items():
+    fig.savefig(f"{evaluation_dir}/Scatter/{fig.axes[0].get_title()}.png")
 
 
 # 5. MAKING PREDICTION WITH INPUT CSV FILES
 print("MAKE PREDICTION WITH INPUT CSV FILES")
 # 5.1. Create prediction dataframe from input csv file
-def create_prediction_df(test_name, lr_model):
+def create_prediction_df(test_name, lr_model, features, target_name):
     df_prediction = read_csv_file(test_name)
     data_clean(df_prediction, test_name)
-    x = df_prediction.to_numpy()
+    x = df_prediction[features]
     y = np.around(lr_model.predict(x), decimals=2)
-    df_prediction['Predicted Performance Index'] = y
+    df_prediction[target_name] = y
     return df_prediction
 
 # 5.2. Identify tests folder and create result folder
@@ -190,7 +191,7 @@ os.makedirs(result_dir,exist_ok=True)
 for test in Path(test_dir).iterdir():
     if test.is_file():
         test_name = test.name.split('.')[0]
-        df_predicted = create_prediction_df(f'{test_dir}/{test_name}', lr_model)
+        df_predicted = create_prediction_df(f'{test_dir}/{test_name}', lr_model, features, 'Predicted Performance Index')
         print(f"{test_name} prediction data:\n",df_predicted)
         save_df(df_predicted, f"{result_dir}/{test_name}_Prediction", "csv")
 
