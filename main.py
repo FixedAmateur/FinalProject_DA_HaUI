@@ -154,7 +154,7 @@ def scatter(x_test, y_test, y_prediction):
     scatters = {}
     target = y_test.name
     for column in x_test:
-        fig = plt.figure(figsize=(10,6))
+        fig = plt.figure(figsize=(10,8))
         plt.scatter(x_test[column], y_test, color="blue", label=column)
         #plt.plot(x_test[column], y_prediction, color="red", label=target)
         plt.title(f"Collaration between {column} and {target}")
