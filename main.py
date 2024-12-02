@@ -137,7 +137,7 @@ lr_model = LinearRegression().fit(df_x_train, df_y_train)
 print("Model created and trained!")
 
 # 4.4. Make prediction on splitted test dataframe
-df_y_predicted = pd.DataFrame(lr_model.predict(df_x_test), columns=["Predicted Performance Index"])
+df_y_predicted = pd.DataFrame(np.round(lr_model.predict(df_x_test), 2), columns=["Predicted Performance Index"])
 save_df(df_y_predicted,f"{evaluation_dir}/{split_dir}/Prediction_of_{file_name}_split_features","csv" )
 
 # 4.4. Evaluate model
