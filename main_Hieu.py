@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from pathlib import Path
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
@@ -64,7 +64,7 @@ print('\n' + file_name + ":\n", df, '\n')
 
 
 # 3. DATA PREPROCESSING
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+#from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 
 
@@ -140,84 +140,84 @@ print(f"Descriptive of {file_name}\n", df_descriptive,'\n')
 save_df(df_descriptive, f"{descriptive_dir}/Descriptive_{file_name}", "csv")
 
 # 3.3. Histogram chart
-# def histogram(df, file_name):
-#     hists = {}
-#     for column in df:
-#         fig = plt.figure(figsize=(10,6))
-#         sns.histplot(df[column], kde=True)
-#         plt.title(f"Distribution of {column} in {file_name}")
-#         plt.xlabel(column)
-#         plt.ylabel("Frequency")
-#         hists[column] = fig
-#     return hists
-#
-# histograms = histogram(df, file_name)
-# os.makedirs("Histogram",exist_ok=True)
-# for column, fig in histograms.items():
-#     fig.savefig(f"Histogram/{column}.png")
+def histogram(df, file_name):
+    hists = {}
+    for column in df:
+        fig = plt.figure(figsize=(10,6))
+        sns.histplot(df[column], kde=True)
+        plt.title(f"Distribution of {column} in {file_name}")
+        plt.xlabel(column)
+        plt.ylabel("Frequency")
+        hists[column] = fig
+    return hists
+
+histograms = histogram(df, file_name)
+os.makedirs("Histogram",exist_ok=True)
+for column, fig in histograms.items():
+    fig.savefig(f"Histogram/{column}.png")
 
 
 # Pie chart
-# def piechart(df, file_name):
-#     pies = []
-#     for column in df:
-#         fig = plt.figure(figsize=(10, 6))
-#
-#         # Đếm số lần xuất hiện của các giá trị trong cột để vẽ biểu đồ pie
-#         value_counts = df[column].value_counts()
-#
-#         # Vẽ pie chart với các điều chỉnh để nhãn không bị đè lên nhau
-#         wedges, texts, autotexts = plt.pie(
-#             value_counts,
-#             labels=value_counts.index,
-#             autopct='%1.1f%%',
-#             startangle=140,
-#             pctdistance=0.8,  # Khoảng cách phần trăm
-#             labeldistance=1.17,  # Khoảng cách nhãn ra ngoài
-#             wedgeprops={'edgecolor': 'black'}  # Thêm đường viền cho các lát cắt
-#         )
-#
-#         # Điều chỉnh font size của nhãn và phần trăm
-#         for text in texts:
-#             text.set_fontsize(5)
-#         for autotext in autotexts:
-#             autotext.set_fontsize(3)
-#
-#         plt.title(f"Pie chart of {column} in {file_name}")
-#
-#         # Lưu hình ảnh vào thư mục
-#         os.makedirs("Pie chart", exist_ok=True)
-#         plt.savefig(f"Pie chart/{column}_pie_chart.png")
-#
-#         # Hiển thị biểu đồ
-#         plt.show()
-#
-#         # Đóng figure để tránh vẽ lại các hình ảnh cũ
-#         plt.close(fig)
-#
-#         pies.append(fig)
-#
-#     return pies
-#
-#
-# pie_charts = piechart(df, 'Student_Performance.csv')
+def piechart(df, file_name):
+    pies = []
+    for column in df:
+        fig = plt.figure(figsize=(10, 6))
+
+        # Đếm số lần xuất hiện của các giá trị trong cột để vẽ biểu đồ pie
+        value_counts = df[column].value_counts()
+
+        # Vẽ pie chart với các điều chỉnh để nhãn không bị đè lên nhau
+        wedges, texts, autotexts = plt.pie(
+            value_counts,
+            labels=value_counts.index,
+            autopct='%1.1f%%',
+            startangle=140,
+            pctdistance=0.8,  # Khoảng cách phần trăm
+            labeldistance=1.17,  # Khoảng cách nhãn ra ngoài
+            wedgeprops={'edgecolor': 'black'}  # Thêm đường viền cho các lát cắt
+        )
+
+        # Điều chỉnh font size của nhãn và phần trăm
+        for text in texts:
+            text.set_fontsize(5)
+        for autotext in autotexts:
+            autotext.set_fontsize(3)
+
+        plt.title(f"Pie chart of {column} in {file_name}")
+
+        # Lưu hình ảnh vào thư mục
+        os.makedirs("Pie chart", exist_ok=True)
+        plt.savefig(f"Pie chart/{column}_pie_chart.png")
+
+        # Hiển thị biểu đồ
+        # plt.show()
+        #
+        # # Đóng figure để tránh vẽ lại các hình ảnh cũ
+        # plt.close(fig)
+
+        pies.append(fig)
+
+    return pies
+
+
+pie_charts = piechart(df, 'Student_Performance.csv')
 
 
 # 3.4. Boxplot chart
-# def boxplot(df, file_name):
-#     boxs = {}
-#     for column in df:
-#         fig = plt.figure(figsize=(10, 6))
-#         sns.boxplot(df[column])
-#         plt.title(f"Boxplot of {column} in {file_name}")
-#         plt.ylabel(column)
-#         boxs[column] = fig
-#     return boxs
-#
-# os.makedirs("Boxplot",exist_ok=True)
-# boxplots = boxplot(df, file_name)
-# for column, fig in boxplots.items():
-#     fig.savefig(f"Boxplot/{column}.png")
+def boxplot(df, file_name):
+    boxs = {}
+    for column in df:
+        fig = plt.figure(figsize=(10, 6))
+        sns.boxplot(df[column])
+        plt.title(f"Boxplot of {column} in {file_name}")
+        plt.ylabel(column)
+        boxs[column] = fig
+    return boxs
+
+os.makedirs("Boxplot",exist_ok=True)
+boxplots = boxplot(df, file_name)
+for column, fig in boxplots.items():
+    fig.savefig(f"Boxplot/{column}.png")
 
 # 3.4. Save preprocessed file
 save_df(df, f"Preprocessed_{file_name}", "csv")
@@ -256,22 +256,67 @@ df_y_predicted = pd.DataFrame(np.round(lr_model.predict(df_x_test), 2), columns=
 save_df(df_y_predicted, f"{evaluation_dir}/{split_dir}/Prediction_of_{file_name}_split_features", "csv")
 
 # 4.5. Evaluate model
-os.makedirs(evaluation_dir, exist_ok=True)
+# os.makedirs(evaluation_dir, exist_ok=True)
+#
+# def evaluate_lr_model(lr_model, evaluation_dir, x_test, y_test, y_pred):
+#     y_pred = y_pred.values.flatten()
+#     evaluation = {
+#         "RMSE": np.round(np.sqrt(metrics.mean_squared_error(y_test, y_pred)), 4),
+#         "R2": np.round(lr_model.score(x_test, y_test), 4)
+#     }
+#     df_evaluation = pd.DataFrame(evaluation.items()).transpose()
+#     save_df(df_evaluation, f"{evaluation_dir}/model_evaluation", "csv")
+#     return df_evaluation
+#
+# df_evaluation = evaluate_lr_model(lr_model, "Model evaluation", df_x_test, df_y_test, df_y_predicted)
+# print("Model evaluation:\n", df_evaluation)
 
-def evaluate_lr_model(lr_model, evaluation_dir, x_test, y_test, y_pred):
-    y_pred = y_pred.values.flatten()  # Chuyển DataFrame thành mảng 1D
+def evaluate_lr_model(lr_model, evaluation_dir, x_test, y_test, y_pred, model_name="LinearRegression"):
+    # Ensure y_test and y_pred are compatible numpy arrays
+    if isinstance(y_test, pd.Series):
+        y_test = y_test.values
+    if isinstance(y_pred, pd.DataFrame):
+        y_pred = y_pred.values.flatten()  # Flatten if y_pred is a DataFrame
+
+    # Check for matching lengths
+    if len(y_test) != len(y_pred):
+        raise ValueError(f"Length mismatch: y_test ({len(y_test)}) and y_pred ({len(y_pred)}) must match.")
+
+    # Calculate evaluation metrics
+    rmse = np.round(np.sqrt(metrics.mean_squared_error(y_test, y_pred)), 4)
+    r2 = np.round(lr_model.score(x_test, y_test), 4)
+
+    # Store results in a DataFrame
     evaluation = {
-        "RMSE": np.round(np.sqrt(metrics.mean_squared_error(y_test, y_pred)), 4),
-        "R2": np.round(lr_model.score(x_test, y_test), 4)
+        "Model": model_name,
+        "RMSE": rmse,
+        "R2": r2
     }
-    df_evaluation = pd.DataFrame(evaluation.items()).transpose()
-    save_df(df_evaluation, f"{evaluation_dir}/model_evaluation", "csv")
+    df_evaluation = pd.DataFrame([evaluation])
+
+    # Ensure the evaluation directory exists
+    os.makedirs(evaluation_dir, exist_ok=True)
+
+    # Save evaluation results to a CSV file
+    evaluation_path = os.path.join(evaluation_dir, "model_evaluation.csv")
+    save_df(df_evaluation, f"{evaluation_dir}/model_evaluation.csv")
+
+    # Print results
+    print(f"Model Evaluation ({model_name}):")
+    print(f"RMSE: {rmse}")
+    print(f"R2: {r2}")
+    print(f"Results saved to {evaluation_path}")
+
     return df_evaluation
 
-df_evaluation = evaluate_lr_model(lr_model, "Model evaluation", df_x_test, df_y_test, df_y_predicted)
-print("Model evaluation:\n", df_evaluation)
+try:
+    df_evaluation = evaluate_lr_model(lr_model, "Model evaluation", df_x_test, df_y_test, df_y_predicted)
+    print('Model evaluation completed successfully:\n', df_evaluation)
+except Exception as e:
+    print(f"Error during model evaluation: {e}")
 
 
+os.makedirs("Heatmap", exist_ok=True)
 def heatmap(df, file_name):
     # Check for numeric columns
     numeric_cols = df.select_dtypes(include=['number'])
@@ -315,172 +360,128 @@ def heatmap(df, file_name):
     plt.yticks(fontsize=12, rotation=0)
 
     # Save and show the heatmap
-    os.makedirs("Heatmap", exist_ok=True)
+
     plt.savefig(f"Heatmap/{file_name}_heatmap.png", bbox_inches='tight')
-    plt.show()
-    plt.close(fig)
-
-# Example usage
-file_name = "Student_Performance"
-
+    # plt.show()
+    # plt.close(fig)
 
 heatmap(df, file_name)
+
+
 # 4.5. Draw scatterplot
-# def scatter(x_test, y_test, y_prediction):
-#     scatters = []
-#     target = y_test.name
-#     for column in x_test:
-#         fig = plt.figure(figsize=(10,8))
-#         plt.scatter(x_test[column], y_test, color="blue", label="Actual")
-#         #plt.plot(x_test[column], y_prediction, color="red", label="Predicted")
-#         plt.title(f"Collaration between {column} and {target}")
-#         plt.xlabel(column)
-#         plt.ylabel(target)
-#         plt.legend()
-#         scatters.append(fig)
-#
-#     return scatters
-#
-# os.makedirs(f"{evaluation_dir}/Scatter", exist_ok=True)
-# scatters = scatter(df_x_test, df_y_test, df_y_predicted)
-# for fig in scatters:
-#     fig.savefig(f"{evaluation_dir}/Scatter/{fig.axes[0].get_title()}.png")
+def scatter(x_test, y_test):
+    scatters = []
+    target = y_test.name
+    for column in x_test:
+        fig = plt.figure(figsize=(10,8))
+        plt.scatter(x_test[column], y_test, color="blue", label="Actual")
+        #plt.plot(x_test[column], y_prediction, color="red", label="Predicted")
+        plt.title(f"Collaration between {column} and {target}")
+        plt.xlabel(column)
+        plt.ylabel(target)
+        plt.legend()
+        scatters.append(fig)
+
+    return scatters
+
+os.makedirs(f"{evaluation_dir}/Scatter", exist_ok=True)
+scatters = scatter(df_x_test, df_y_test)
+for fig in scatters:
+    fig.savefig(f"{evaluation_dir}/Scatter/{fig.axes[0].get_title()}.png")
 
 
 # 5. MAKING PREDICTION WITH INPUT CSV FILES
 
-from pathlib import Path
-
-base_path = Path("Tests")
-file_path = base_path.joinpath(file_name)  # Thay cho file_path = base_path + file_name
-
-file_path = str(file_path)
-
 print("MAKE PREDICTION WITH INPUT CSV FILES")
+# def load_csv(file_path):
+#     try:
+#         # Đọc dữ liệu từ file CSV
+#         if not Path(file_path).exists():
+#             raise FileNotFoundError(f"File {file_path} does not exist.")
+#
+#         # Đọc file CSV
+#         df = pd.read_csv(file_path)
+#
+#         # Kiểm tra file có dữ liệu hay không
+#         if df.empty:
+#             raise ValueError(f"File {file_path} is empty or invalid.")
+#
+#         return df
+#     except Exception as e:
+#         print(f"An error occurred while reading the file: {e}")
+#         return None
 
-def load_csv(file_path):
+# test_dir = "Tests"
+# def create_prediction_df(test_path, lr_model, features, target_name):
+#     # Đọc file CSV
+#     test_path = Path(test_path)
+#     try:
+#         df_prediction = pd.read_csv(test_path)
+#         if df_prediction.empty:
+#             print(f"Error: File {test_path.name} is empty or invalid.")
+#             return None
+#     except Exception as e:
+#         print(f"Error reading file {test_path.name}: {e}")
+#         return None
+#
+#     # Chỉ giữ lại các cột thuộc danh sách features
+#     df_prediction = df_prediction[[col for col in df_prediction.columns if col in features]]
+#
+#     # Kiểm tra nếu còn thiếu cột
+#     missing_features = [feature for feature in features if feature not in df_prediction.columns]
+#     if missing_features:
+#         print(f"Error: Missing features {missing_features} in {test_path.stem}.")
+#         return None
+#
+#     # Mã hóa hoặc loại bỏ các cột không phải số
+#     for column in df_prediction.select_dtypes(exclude=[np.number]).columns:
+#         if column in features:
+#             print(f"Warning: Column {column} is non-numeric. Encoding or dropping it...")
+#             # Mã hóa cột (dùng LabelEncoder nếu cần thiết)
+#             try:
+#                 df_prediction[column] = df_prediction[column].astype(str).factorize()[0]
+#             except Exception as e:
+#                 print(f"Error encoding column {column}: {e}")
+#                 df_prediction = df_prediction.drop(columns=[column])
+#
+#     # Điền giá trị thiếu
+#     df_prediction = df_prediction.fillna(0)
+#
+#     # Dự đoán
+#     try:
+#         y = np.around(lr_model.predict(df_prediction), decimals=2)
+#         df_prediction[target_name] = y
+#     except Exception as e:
+#
+#         print(f"Error during prediction for {test_path.stem}: {e}")
+#         return None
+#
+#     return df_prediction
+
+def create_prediction_df(test_name, lr_model, features, target_name):
+    df_prediction = read_csv_file(test_name)
     try:
-        # Đọc dữ liệu từ file CSV
-        if not Path(file_path).exists():
-            raise FileNotFoundError(f"File {file_path} does not exist.")
-
-        # Đọc file CSV
-        df = pd.read_csv(file_path)
-
-        # Kiểm tra file có dữ liệu hay không
-        if df.empty:
-            raise ValueError(f"File {file_path} is empty or invalid.")
-
-        return df
-    except Exception as e:
-        print(f"An error occurred while reading the file: {e}")
-        return None
-
-def create_prediction_df(test_path, lr_model, features, target_name):
-    # Đọc file CSV
-    test_path = Path(test_path)
-    try:
-        df_prediction = pd.read_csv(test_path)
-        if df_prediction.empty:
-            print(f"Error: File {test_path.name} is empty or invalid.")
-            return None
-    except Exception as e:
-        print(f"Error reading file {test_path.name}: {e}")
-        return None
-
-    # Chỉ giữ lại các cột thuộc danh sách features
-    df_prediction = df_prediction[[col for col in df_prediction.columns if col in features]]
-
-    # Kiểm tra nếu còn thiếu cột
-    missing_features = [feature for feature in features if feature not in df_prediction.columns]
-    if missing_features:
-        print(f"Error: Missing features {missing_features} in {test_path.stem}.")
-        return None
-
-    # Mã hóa hoặc loại bỏ các cột không phải số
-    for column in df_prediction.select_dtypes(exclude=[np.number]).columns:
-        if column in features:
-            print(f"Warning: Column {column} is non-numeric. Encoding or dropping it...")
-            # Mã hóa cột (dùng LabelEncoder nếu cần thiết)
-            try:
-                df_prediction[column] = df_prediction[column].astype(str).factorize()[0]
-            except Exception as e:
-                print(f"Error encoding column {column}: {e}")
-                df_prediction = df_prediction.drop(columns=[column])
-
-    # Điền giá trị thiếu
-    df_prediction = df_prediction.fillna(0)
-
-    # Dự đoán
-    try:
-        y = np.around(lr_model.predict(df_prediction), decimals=2)
+        df_prediction = preprocess_data(df_prediction, test_name)
+        x = df_prediction[features]
+        print(x)
+        y = np.around(lr_model.predict(x), decimals=2)
         df_prediction[target_name] = y
     except Exception as e:
-
-        print(f"Error during prediction for {test_path.stem}: {e}")
-        return None
-
+        print(f"Error in predicting test file: {test_name}.\nDetailed error: {e}")
     return df_prediction
 
-# Đường dẫn thư mục
+# 5.2. Identify tests folder and create result folder
 test_dir = 'Tests'
 result_dir = 'Results'
-os.makedirs(result_dir, exist_ok=True)
+os.makedirs(result_dir,exist_ok=True)
 
-# Tạo file dự đoán
+# 5.3. Create prediction files
 for test in Path(test_dir).iterdir():
     if test.is_file():
-        test_name = test.stem  # Lấy tên file không có phần mở rộng
-        print(f"Processing file: {test_name}")
-        df_predicted = create_prediction_df(test, lr_model, features, 'Predicted Performance Index')
-        if df_predicted is not None:
-            save_df(df_predicted, f"{result_dir}/{test_name}_Prediction", "csv")
-            print(f"Prediction saved for {test_name}.")
-        else:
-            print(f"Skipping {test_name} due to errors.")
+        test_name = test.name.split('.')[0]
+        df_predicted = create_prediction_df(f'{test_dir}/{test_name}', lr_model, features, 'Predicted Performance Index')
+        print(f"{test_name} prediction data:\n",df_predicted)
+        save_df(df_predicted, f"{result_dir}/{test_name}_Prediction", "csv")
 
 
-def evaluate_lr_model(lr_model, evaluation_dir, x_test, y_test, y_pred, model_name="LinearRegression"):
-    # Ensure y_test and y_pred are compatible numpy arrays
-    if isinstance(y_test, pd.Series):
-        y_test = y_test.values
-    if isinstance(y_pred, pd.DataFrame):
-        y_pred = y_pred.values.flatten()  # Flatten if y_pred is a DataFrame
 
-    # Check for matching lengths
-    if len(y_test) != len(y_pred):
-        raise ValueError(f"Length mismatch: y_test ({len(y_test)}) and y_pred ({len(y_pred)}) must match.")
-
-    # Calculate evaluation metrics
-    rmse = np.round(np.sqrt(metrics.mean_squared_error(y_test, y_pred)), 4)
-    r2 = np.round(lr_model.score(x_test, y_test), 4)
-
-    # Store results in a DataFrame
-    evaluation = {
-        "Model": model_name,
-        "RMSE": rmse,
-        "R2": r2
-    }
-    df_evaluation = pd.DataFrame([evaluation])
-
-    # Ensure the evaluation directory exists
-    os.makedirs(evaluation_dir, exist_ok=True)
-
-    # Save evaluation results to a CSV file
-    evaluation_path = os.path.join(evaluation_dir, "model_evaluation.csv")
-    df_evaluation.to_csv(evaluation_path, index=False)
-
-    # Print results
-    print(f"Model Evaluation ({model_name}):")
-    print(f"RMSE: {rmse}")
-    print(f"R2: {r2}")
-    print(f"Results saved to {evaluation_path}")
-
-    return df_evaluation
-
-# Example usage
-try:
-    df_evaluation = evaluate_lr_model(lr_model, "Model evaluation", df_x_test, df_y_test, df_y_predicted)
-    print('Model evaluation completed successfully:\n', df_evaluation)
-except Exception as e:
-    print(f"Error during model evaluation: {e}")

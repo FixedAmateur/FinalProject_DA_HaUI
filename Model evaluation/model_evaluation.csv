@@ -1,3 +1,2 @@
-,0,1
-0,RMSE,R2
-1,2.0205,0.989
+,Model,RMSE,R2
+Value,Linear Regression,2.0205,0.989

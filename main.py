@@ -1,3 +1,4 @@
+
 import os
 import numpy as np
 import pandas as pd
@@ -182,14 +183,14 @@ print("MAKE PREDICTION WITH INPUT CSV FILES")
 # 5.1. Create prediction dataframe from input csv file
 def create_prediction_df(test_name, lr_model, features, target_name):
     df_prediction = read_csv_file(test_name)
-    df_prediction = data_clean(df_prediction, test_name)
-    x = df_prediction[features]
-    print(x)
-    if x.isnull().sum().sum() > 0:
-        print("Warning: The input contains NaN values after cleaning.")
-        return None
-    y = np.around(lr_model.predict(x), decimals=2)
-    df_prediction[target_name] = y
+    try:
+        df_prediction = data_clean(df_prediction, test_name)
+        x = df_prediction[features]
+        print(x)
+        y = np.around(lr_model.predict(x), decimals=2)
+        df_prediction[target_name] = y
+    except Exception as e:
+        print(f"Error in predicting test file: {test_name}.\nDetailed error: {e}")
     return df_prediction
 
 # 5.2. Identify tests folder and create result folder
