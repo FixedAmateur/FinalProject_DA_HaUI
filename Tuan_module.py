@@ -1,3 +1,4 @@
+
 import Hieu_module as H
 import Nam_module as N
 
@@ -52,14 +53,6 @@ def save_descriptive(df, file_name):
     save_df(df_descriptive, f"{descriptive_dir}/Descriptive_{file_name}",  "csv")
     return df_descriptive
 
-# Get regression equation
-def get_regression_equation(lr_model, features):
-    coefficients = lr_model.coef_
-    intercept = lr_model.intercept_
-    equation = f"y = {np.round(intercept, 4)}"
-    for coef, feature in zip(coefficients, features):
-        equation += f" + ({np.round(coef, 4)})*({feature})"
-    return equation
 
 # Split dataframe into dependent and independent variables
 def identify_variables_df(df, target_var, file_name):
@@ -91,17 +84,17 @@ def train_lr_model(df_x, df_y) :
     return lr_model
 
 # Create and save regression_equation
-def regression_equation(lr_model, features, evaluation_dir):
+def regression_equation(lr_model, features, target, evaluation_dir):
     coefficients = lr_model.coef_
     intercept = lr_model.intercept_
-    equation = f"y = {np.round(intercept, 4)}"
+    equation = f"{target} = {np.round(intercept, 4)}"
     for coef, feature in zip(coefficients, features):
         equation += f" + ({np.round(coef, 4)})*({feature})"
 
     equa_df = pd.DataFrame({"Regression Equation" : [equation]})
 
     print(equa_df)
-    save_df(evaluation_dir + '/' + equa_df, "Regression equation",  "txt")
+    save_df(equa_df, evaluation_dir + "/Regression equation",  "txt")
     return equation
 
 def predict_split_training_file(x_test, lr_model, evaluation_dir, split_dir, file_name):
@@ -127,13 +120,13 @@ def save_predict_folder(lr_model, features, target, test_dir):
     result_dir = f'Results'
     os.makedirs(result_dir,exist_ok=True)
     res = []
-    for test in Path().iterdir():
+    for test in Path(test_dir).iterdir():
         if test.is_file():
             test_name = test.name.split('.')[0]
             df_predicted = read_csv_file(f"{test_dir}/{test_name}")
             df_predicted = predict_df(df_predicted, f'{test_dir}/{test_name}', lr_model, features, target)
             print(f"{test_name} prediction data:\n",df_predicted)
-            save_df(df_predicted, f"{result_dir}/{test_name}_Prediction","")
+            save_df(df_predicted, f"{result_dir}/{test_name}_Prediction","csv")
             res.append(df_predicted)
     return res
 

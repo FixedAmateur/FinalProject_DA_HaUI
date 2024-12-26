@@ -1,2 +1,0 @@
-,Regression Equation
-0,Model evaluation/y = -33.9219 + (2.8525)*(Hours Studied) + (1.017)*(Previous Scores) + (0.6086)*(Extracurricular Activities) + (0.4769)*(Sleep Hours) + (0.1918)*(Sample Question Papers Practiced)

@@ -65,7 +65,7 @@ lr_model = T.train_lr_model(df_x_train, df_y_train)
 df_y_predicted = T.predict_split_training_file(df_x_test, lr_model, evaluation_dir, split_dir, training_file)
 
 # Write and save regression equation
-T.regression_equation(lr_model, features, evaluation_dir)
+T.regression_equation(lr_model, features, target, evaluation_dir)
 
 # Evaluate model
 N.evaluate_lr_model(lr_model, evaluation_dir, df_x_test, df_y_test, df_y_predicted)
