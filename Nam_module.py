@@ -1,6 +1,5 @@
 import Tuan_module as T
-import Hieu_module as N
-import main
+import Hieu_module as H
 
 import os
 import numpy as np

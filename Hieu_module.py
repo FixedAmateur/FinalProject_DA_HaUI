@@ -1,6 +1,5 @@
 import Tuan_module as T
 import Nam_module as N
-import main
 
 import os
 import numpy as np
